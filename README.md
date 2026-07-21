@@ -2,7 +2,7 @@ SigAnalyzer quickly analyzes scanning signatures and translates them into the ty
 
 To use, just download the .exe and double-click to open, then type in any signature obtained while scanning and hit Enter.
 <br><br>
-<img width="324" height="354" alt="image" src="https://github.com/user-attachments/assets/058e1641-455d-4dff-8b79-0e9cba81adf4" />
+<div align="center"><img width="324" height="354" alt="image" src="https://github.com/user-attachments/assets/058e1641-455d-4dff-8b79-0e9cba81adf4" /></div>
 
 
 
