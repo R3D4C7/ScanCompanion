@@ -75,9 +75,9 @@ def focus_and_click_entry():
     except Exception as e:
         print(f"Error focusing entry box: {e}")
 
-def listen_for_backslash():
-    """Background thread to listen for Backslash keypress globally."""
-    keyboard.add_hotkey("\\", focus_and_click_entry)
+def listen_for_caps_lock():
+    """Background thread to listen for Caps Lock keypress globally."""
+    keyboard.add_hotkey("caps lock", focus_and_click_entry)
 
 def lookup_material(event=None):
     raw_input = entry.get().strip().lstrip("!")
@@ -115,7 +115,8 @@ def lookup_material(event=None):
                 output_text.insert(tk.END, "■", rarity)
                 
                 # 3. Insert Multiplier if applicable
-                output_text.insert(tk.END, f" ({multiplier}x)")
+                if multiplier:
+                    output_text.insert(tk.END, f" ({multiplier}x)")
         else:
             output_text.insert(tk.END, "Unknown")
     else:
@@ -135,6 +136,7 @@ def toggle_dark_mode():
     
     bg_color = "#1E1E1E" if is_dark else "#F0F0F0"
     fg_color = "#FFFFFF" if is_dark else "#000000"
+    border_color = "#444444" if is_dark else "#A0A0A0"
     input_bg = "#2D2D2D" if is_dark else "#FFFFFF"
     btn_bg = "#3A3A3A" if is_dark else "#E1E1E1"
     active_btn_bg = "#4A4A4A" if is_dark else "#ECECEC"
@@ -143,12 +145,14 @@ def toggle_dark_mode():
 
     # Main window and frames
     root.config(bg=bg_color)
+    main_container.config(bg=bg_color, highlightbackground=border_color)
     footer_frame.config(bg=bg_color)
     options_frame.config(bg=bg_color)
     opacity_frame.config(bg=bg_color)
     legend_frame.config(bg=bg_color, fg=fg_color)
 
     # Labels
+    app_title_label.config(bg=bg_color, fg=fg_color)
     title_label.config(bg=bg_color, fg=fg_color)
     creator_label.config(bg=bg_color, fg=fg_color)
     opacity_label.config(bg=bg_color, fg=fg_color)
@@ -161,6 +165,7 @@ def toggle_dark_mode():
     btn.config(bg=btn_bg, fg=fg_color, activebackground=active_btn_bg, activeforeground=fg_color)
     ontop_check.config(bg=bg_color, fg=fg_color, selectcolor=input_bg, activebackground=bg_color, activeforeground=fg_color)
     dark_check.config(bg=bg_color, fg=fg_color, selectcolor=input_bg, activebackground=bg_color, activeforeground=fg_color)
+    lock_check.config(bg=bg_color, fg=fg_color, selectcolor=input_bg, activebackground=bg_color, activeforeground=fg_color)
     opacity_scale.config(bg=bg_color, fg=fg_color, activebackground=bg_color, troughcolor=btn_bg)
 
     # Update Output Text Tags
@@ -178,49 +183,79 @@ def on_close():
     keyboard.unhook_all()
     root.destroy()
 
+# --- Drag Mechanics ---
+def start_drag(event):
+    if lock_pos_var.get():
+        return  # Ignore drag initialization if locked
+    root._drag_start_x = event.x_root - root.winfo_x()
+    root._drag_start_y = event.y_root - root.winfo_y()
+
+def do_drag(event):
+    if lock_pos_var.get():
+        return  # Ignore movement if locked
+    x = event.x_root - root._drag_start_x
+    y = event.y_root - root._drag_start_y
+    root.geometry(f"+{x}+{y}")
+
+def bind_drag_events(widget):
+    """Recursively binds drag events to background/label widgets."""
+    # Exclude interactive control widgets from dragging
+    if not isinstance(widget, (tk.Entry, tk.Button, tk.Checkbutton, tk.Scale, tk.Text)):
+        widget.bind("<Button-1>", start_drag)
+        widget.bind("<B1-Motion>", do_drag)
+    for child in widget.winfo_children():
+        bind_drag_events(child)
+
 # Create GUI window
 root = tk.Tk()
 root.title("ScanCompanion")
-root.geometry("320x390")
+
+# --- Remove Title Bar & Window Controls ---
+root.overrideredirect(True)
+
+root.geometry("320x440") # Slightly increased height to fit the new option cleanly
 root.resizable(False, False)
-root.protocol("WM_DELETE_WINDOW", on_close)
+
+# --- Outer Border Container Frame ---
+main_container = tk.Frame(root, highlightthickness=2, highlightbackground="#A0A0A0", bg="#F0F0F0")
+main_container.pack(fill="both", expand=True)
 
 # --- Focused Fallback Keybind ---
-# Works within Tkinter natively when window has focus
 root.bind("\\", lambda e: focus_and_click_entry())
 
 # --- Global Hotkey Listener ---
-# Listens in a daemon thread so it catches Backslash even when unfocused
-hotkey_thread = threading.Thread(target=listen_for_backslash, daemon=True)
+hotkey_thread = threading.Thread(target=listen_for_caps_lock, daemon=True)
 hotkey_thread.start()
 
-# --- Footer / Credit Section (Packed FIRST to stick to bottom) ---
-footer_frame = tk.Frame(root)
+# --- App Header Title ---
+app_title_label = tk.Label(main_container, text="ScanCompanion", font=("Arial", 14, "bold"), bg="#F0F0F0")
+app_title_label.pack(pady=(10, 2))
+
+# --- Footer / Credit Section ---
+footer_frame = tk.Frame(main_container)
 footer_frame.pack(side="bottom", pady=(0, 3))
 
-creator_label = tk.Label(footer_frame, text="Made by the community.", font=("Arial", 8))
+creator_label = tk.Label(footer_frame, text="Made by The Community.", font=("Arial", 8))
 creator_label.pack(side="left")
 
 # --- Top and Center Widgets ---
-# Input Field
-title_label = tk.Label(root, text="Enter signature value:", font=("Arial", 10, "bold"))
-title_label.pack(pady=(12, 4))
+title_label = tk.Label(main_container, text="Enter signature value:", font=("Arial", 9, "bold"))
+title_label.pack(pady=(4, 4))
 
-entry = tk.Entry(root, font=("Arial", 12), justify="center", width=20)
+entry = tk.Entry(main_container, font=("Arial", 12), justify="center", width=20)
 entry.pack(pady=4)
 entry.bind("<Return>", lookup_material)
 
-# Lookup Button
 btn = tk.Button(
-    root,
+    main_container,
     text="Search",
     command=lookup_material,
     font=("Arial", 10),
 )
 btn.pack(pady=4)
 
-# Options Frame (Always On Top & Dark Mode)
-options_frame = tk.Frame(root)
+# --- Options Options Area ---
+options_frame = tk.Frame(main_container)
 options_frame.pack(pady=2)
 
 always_on_top_var = tk.BooleanVar(value=False)
@@ -231,7 +266,7 @@ ontop_check = tk.Checkbutton(
     command=toggle_always_on_top,
     font=("Arial", 8)
 )
-ontop_check.pack(side="left", padx=5)
+ontop_check.grid(row=0, column=0, padx=5, pady=2)
 
 dark_mode_var = tk.BooleanVar(value=False)
 dark_check = tk.Checkbutton(
@@ -241,10 +276,19 @@ dark_check = tk.Checkbutton(
     command=toggle_dark_mode,
     font=("Arial", 8)
 )
-dark_check.pack(side="left", padx=5)
+dark_check.grid(row=0, column=1, padx=5, pady=2)
 
-# --- Opacity Slider (Center-aligned directly under the two checkbuttons) ---
-opacity_frame = tk.Frame(root)
+lock_pos_var = tk.BooleanVar(value=False)
+lock_check = tk.Checkbutton(
+    options_frame,
+    text="Lock Position",
+    variable=lock_pos_var,
+    font=("Arial", 8)
+)
+lock_check.grid(row=1, column=0, columnspan=2, pady=2)
+
+# --- Opacity Slider ---
+opacity_frame = tk.Frame(main_container)
 opacity_frame.pack(pady=(2, 4))
 
 opacity_label = tk.Label(opacity_frame, text="Opacity:", font=("Arial", 8))
@@ -252,11 +296,11 @@ opacity_label.pack(side="left", padx=(0, 5))
 
 opacity_scale = tk.Scale(
     opacity_frame,
-    from_=1.0,          # 100% Opacity
-    to=0.3,            # Minimum opacity capped at 30%
+    from_=1.0,
+    to=0.3,
     resolution=0.05,
     orient="horizontal",
-    showvalue=False,   # Keep layout clean
+    showvalue=False,
     length=110,
     width=10,
     command=update_opacity
@@ -264,9 +308,8 @@ opacity_scale = tk.Scale(
 opacity_scale.set(1.0)
 opacity_scale.pack(side="left")
 
-# Output Text Box
 output_text = tk.Text(
-    root,
+    main_container,
     height=4,
     width=25,
     font=("Arial", 10, "bold"),
@@ -276,19 +319,16 @@ output_text = tk.Text(
 )
 output_text.pack(pady=(6, 10))
 
-# Configure Text Tags for colors
 for rarity, color in RARITY_COLORS_LIGHT.items():
     output_text.tag_config(rarity, foreground=color)
 
 output_text.config(state="disabled")
 
-# --- Rarity Legend Key ---
-legend_frame = tk.LabelFrame(root, text=" Rarity Legend ", font=("Arial", 8, "bold"))
+legend_frame = tk.LabelFrame(main_container, text=" Rarity Legend ", font=("Arial", 8, "bold"))
 legend_frame.pack(pady=(0, 6), padx=15)
 
 legend_widgets = {}
 
-# Grid layout for legend (2 rows x 3 columns)
 for idx, (rarity, color) in enumerate(RARITY_COLORS_LIGHT.items()):
     row = idx // 3
     col = idx % 3
@@ -296,14 +336,15 @@ for idx, (rarity, color) in enumerate(RARITY_COLORS_LIGHT.items()):
     item_frame = tk.Frame(legend_frame)
     item_frame.grid(row=row, column=col, padx=6, pady=2, sticky="w")
     
-    # Colored Square Symbol
     sq_label = tk.Label(item_frame, text="■", fg=color, font=("Arial", 9, "bold"))
     sq_label.pack(side="left")
     
-    # Rarity Name Label
     txt_label = tk.Label(item_frame, text=rarity.title(), font=("Arial", 8))
     txt_label.pack(side="left", padx=(2, 0))
 
     legend_widgets[rarity] = (item_frame, sq_label, txt_label)
+
+# Attach click-and-drag logic automatically to all non-interactive background areas
+bind_drag_events(main_container)
 
 root.mainloop()
