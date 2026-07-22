@@ -1,0 +1,161 @@
+import tkinter as tk
+
+
+# Color mapping for each rarity tier
+RARITY_COLORS = {
+    "JUNK": "#808080",       # Grey
+    "COMMON": "#000000",     # Black
+    "UNCOMMON": "#2EA44F",   # Green
+    "RARE": "#0070DD",       # Blue
+    "EPIC": "#A335EE",       # Purple
+    "LEGENDARY": "#FF8000",  # Gold / Orange
+}
+
+# Base materials structured as: Base Value: (Name, Rarity)
+MATERIALS = {
+    2000: ("Scrap", "JUNK"),
+    3885: ("Agricium", "UNCOMMON"),
+    4285: ("Aluminum", "COMMON"),
+    3840: ("Aslarite", "UNCOMMON"),
+    3540: ("Beryl", "RARE"),
+    3600: ("Bexalite", "RARE"),
+    3570: ("Borase", "RARE"),
+    4240: ("Copper", "COMMON"),
+    4225: ("Corundrum", "COMMON"),
+    3585: ("Gold", "RARE"),
+    4180: ("Hephaestanite", "COMMON"),
+    4300: ("Ice", "COMMON"),
+    4270: ("Iron", "COMMON"),
+    3825: ("Laranite", "UNCOMMON"),
+    3400: ("Lindinium", "EPIC"),
+    3370: ("Ouratite", "EPIC"),
+    3170: ("Quantanium", "LEGENDARY"),
+    4210: ("Quartz", "COMMON"),
+    3385: ("Riccite", "EPIC"),
+    3200: ("Savrilium", "LEGENDARY"),
+    4255: ("Silicon", "COMMON"),
+    3185: ("Stileron", "LEGENDARY"),
+    3555: ("Taranite", "RARE"),
+    4195: ("Tin", "COMMON"),
+    3855: ("Titanium", "UNCOMMON"),
+    3900: ("Torite", "UNCOMMON"),
+    3870: ("Tungsten", "UNCOMMON"),
+    3000: ("FPS Mineable", "COMMON"),
+    4000: ("ROC Mineable", "COMMON"),
+}
+
+def lookup_material(event=None):
+    raw_input = entry.get().strip().lstrip("!")
+    
+    # Clear the input field immediately
+    entry.delete(0, tk.END)
+    
+    output_text.config(state="normal")
+    output_text.delete("1.0", tk.END)
+
+    if raw_input.isdigit():
+        value = int(raw_input)
+        matches = []
+
+        # Find ALL matching items or multiplier matches
+        for base_val, item in MATERIALS.items():
+            if value == base_val:
+                matches.append((item, None))  # Exact match (1x)
+            elif value > base_val and value % base_val == 0:
+                multiplier = value // base_val
+                matches.append((item, multiplier))
+
+        if matches:
+            for idx, (item, multiplier) in enumerate(matches):
+                name, rarity = item
+                
+                # Insert newline before subsequent matches
+                if idx > 0:
+                    output_text.insert(tk.END, "\n")
+                
+                # 1. Insert Material Name
+                output_text.insert(tk.END, f"{name} ")
+                
+                # 2. Insert colored square symbol for Rarity
+                output_text.insert(tk.END, "■", rarity)
+                
+                # 3. Insert Multiplier if applicable
+                if multiplier:
+                    output_text.insert(tk.END, f" ({multiplier}x)")
+        else:
+            output_text.insert(tk.END, "Unknown")
+    else:
+        output_text.insert(tk.END, "Unknown")
+
+    output_text.config(state="disabled")
+
+# Create GUI window
+root = tk.Tk()
+root.title("SigAnalyzer")
+root.geometry("320x320")
+root.resizable(False, False)
+
+# --- Footer / Credit Section (Packed FIRST to stick to bottom) ---
+footer_frame = tk.Frame(root)
+# side="bottom" pins it down, pady=(0, 3) gives exactly 3px buffer from bottom border
+footer_frame.pack(side="bottom", pady=(0, 3))
+
+creator_label = tk.Label(footer_frame, text="Made by the community.", font=("Arial", 8))
+creator_label.pack(side="left")
+
+# --- Top and Center Widgets ---
+
+# Input Field
+tk.Label(root, text="Enter signature value:", font=("Arial", 10, "bold")).pack(pady=(12, 4))
+entry = tk.Entry(root, font=("Arial", 12), justify="center", width=20)
+entry.pack(pady=4)
+entry.bind("<Return>", lookup_material)
+
+# Lookup Button
+btn = tk.Button(
+    root,
+    text="Search",
+    command=lookup_material,
+    font=("Arial", 10),
+)
+btn.pack(pady=4)
+
+# Output Text Box
+output_text = tk.Text(
+    root,
+    height=4,
+    width=25,
+    font=("Arial", 10, "bold"),
+    wrap="word",
+    relief="solid",
+    bd=1,
+)
+output_text.pack(pady=(6, 12))
+
+# Configure Text Tags for colors
+for rarity, color in RARITY_COLORS.items():
+    output_text.tag_config(rarity, foreground=color)
+
+output_text.config(state="disabled")
+
+# --- Rarity Legend Key ---
+legend_frame = tk.LabelFrame(root, text=" Rarity Legend ", font=("Arial", 8, "bold"))
+legend_frame.pack(pady=(0, 6), padx=15)
+
+# Grid layout for legend (2 rows x 3 columns)
+for idx, (rarity, color) in enumerate(RARITY_COLORS.items()):
+    row = idx // 3
+    col = idx % 3
+    
+    item_frame = tk.Frame(legend_frame)
+    item_frame.grid(row=row, column=col, padx=6, pady=2, sticky="w")
+    
+    # Colored Square Symbol
+    sq_label = tk.Label(item_frame, text="■", fg=color, font=("Arial", 9, "bold"))
+    sq_label.pack(side="left")
+    
+    # Rarity Name Label
+    txt_label = tk.Label(item_frame, text=rarity.title(), font=("Arial", 8))
+    txt_label.pack(side="left", padx=(2, 0))
+
+root.mainloop()
