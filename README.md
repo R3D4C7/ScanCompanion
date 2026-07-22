@@ -1,4 +1,4 @@
-SigAnalyzer quickly analyzes scanning signatures and translates them into the type of ore, rock quantity, and rarity hidden within distant signature clouds. It's nice because it makes it easier so you don't have to triple scan an area with more focused scans or fly closer to see what it is.
+ScanCompanion quickly analyzes scanning signatures and translates them into the type of ore, rock quantity, and rarity hidden within distant signature clouds. It's nice because it makes it easier so you don't have to triple scan an area with more focused scans or fly closer to see what it is.
 To use, just download the .exe and double-click to open, then type in any signature obtained while scanning and hit Enter.
 <br><br>
 <div align="center"><img width="324" height="424" alt="image" src="https://github.com/user-attachments/assets/479526db-630d-4ee4-970b-2fb2204637dd" />
@@ -17,7 +17,7 @@ To use, just download the .exe and double-click to open, then type in any signat
 <br>
 Here's what that looks like.
 <br>
-To switch between the game and SigAnalyzer, with Always On Top enabled, press the Backslash key (\) and the cursor will move to the input box awaiting your signature input for a seamless transition. No tabbing out needed.
+To switch between the game and ScanCompanion, with Always On Top enabled, press the Backslash key (\) and the cursor will move to the input box awaiting your signature input for a seamless transition. No tabbing out needed.
 <br>
 <img width="1920" height="1077" alt="image" src="https://github.com/user-attachments/assets/09197893-8c99-41ac-869e-918ce3dc8169" />
 </div>
