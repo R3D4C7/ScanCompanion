@@ -7,8 +7,8 @@ To use, just download the .exe and double-click to open, then type in any signat
 <br>
   with Dark Mode and Always On Top options.
 <br>
-<img width="324" height="384" alt="image" src="https://github.com/user-attachments/assets/2db61f99-5cdd-45a5-81d0-5be005bc3671" />
-<img width="325" height="385" alt="image" src="https://github.com/user-attachments/assets/cf36b3d4-5a12-4b09-8b75-ff90ab6f827c" />
+<img width="324" height="424" alt="image" src="https://github.com/user-attachments/assets/b04bee07-7be8-44ba-9cd0-ab64b15f2c58" />
+<img width="324" height="424" alt="image" src="https://github.com/user-attachments/assets/da5591d6-0757-47f5-9a6a-4b6e3a8820e0" />
 <br>
  and an opacity slider so you can have it up while playing without having to alt-tab out.
 <br>
