@@ -16,9 +16,14 @@ To use, just download the .exe and double-click to open, then type in any signat
 <img width="322" height="442" alt="opacity" src="https://github.com/user-attachments/assets/bce62f87-ea0e-4300-ad1b-9a223ed92c93" />
 <img width="322" height="442" alt="opacity2" src="https://github.com/user-attachments/assets/2280a017-5abc-43eb-9b13-a580b36cc6c8" />
 <br>
-Here's what that looks like.
+Here's what that looks like. Press Tab to use your scanners to scan. <br>
+You should see the scan signature at the top of the scanning HUD. Take that value and enter it into ScanCompanion.
 <br>
-<img width="1920" height="1077" alt="image" src="https://github.com/user-attachments/assets/09197893-8c99-41ac-869e-918ce3dc8169" />
+<img width="1920" height="1080" alt="Scan" src="https://github.com/user-attachments/assets/4908abad-4d25-47ca-a833-ceba42c7f880" />
+<br>ScanCompanion will show you which rocks are there so you don't have to fly up to each signature cloud you see and can keep moving until you find something you want to mine.<br>
+<img width="1920" height="1080" alt="scan2" src="https://github.com/user-attachments/assets/8abd87b2-be91-4676-8fbd-1ea50e817c21" />
+
+
 </div>
 <br><br><br>
 New to Star Citizen?<br><br> Start playing today and use my referral code for a free 50,000 UEC starting currency: https://robertsspaceindustries.com/enlist?referral=STAR-YCJJ-JSRG
