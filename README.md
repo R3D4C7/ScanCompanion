@@ -12,8 +12,9 @@ To use, just download the .exe and double-click to open, then type in any signat
 <br>
 And an opacity slider so you can have it up while playing without having to alt-tab out.
 <br>
-<img width="324" height="424" alt="image" src="https://github.com/user-attachments/assets/068c3267-8068-4ed9-bb76-a9339703bd3d" />
 <img width="324" height="424" alt="image" src="https://github.com/user-attachments/assets/86375639-957b-46ea-9e57-fb77f3f08890" />
+<img width="324" height="424" alt="image" src="https://github.com/user-attachments/assets/b385fb7d-0951-4e5e-9d4e-4f2c2396c98e" />
+
 </div>
 <br>
 Note: It might throw a warning when you first launch it because I'm not paying Microsoft for a license. It doesnt pull any data from or interact with the game in any way, just references a self-contained database of values for ores and checks to see if any signatures entered are divisible by those values to return a number of rocks and ore type.
