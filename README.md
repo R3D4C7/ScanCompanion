@@ -10,7 +10,7 @@ To use, just download the .exe and double-click to open, then type in any signat
 <img width="324" height="384" alt="image" src="https://github.com/user-attachments/assets/2db61f99-5cdd-45a5-81d0-5be005bc3671" />
 <img width="325" height="385" alt="image" src="https://github.com/user-attachments/assets/cf36b3d4-5a12-4b09-8b75-ff90ab6f827c" />
 <br>
-And an opacity slider so you can have it up while playing without having to alt-tab out.
+ and an opacity slider so you can have it up while playing without having to alt-tab out.
 <br>
 <img width="324" height="424" alt="image" src="https://github.com/user-attachments/assets/86375639-957b-46ea-9e57-fb77f3f08890" />
 <img width="324" height="424" alt="image" src="https://github.com/user-attachments/assets/b385fb7d-0951-4e5e-9d4e-4f2c2396c98e" />
