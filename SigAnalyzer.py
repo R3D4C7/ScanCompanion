@@ -1,14 +1,18 @@
 import tkinter as tk
 
-
 # Color mapping for each rarity tier
-RARITY_COLORS = {
-    "JUNK": "#808080",       # Grey
-    "COMMON": "#000000",     # Black
-    "UNCOMMON": "#2EA44F",   # Green
-    "RARE": "#0070DD",       # Blue
-    "EPIC": "#A335EE",       # Purple
-    "LEGENDARY": "#FF8000",  # Gold / Orange
+RARITY_COLORS_LIGHT = {
+    "JUNK": "#808080",      # Grey
+    "COMMON": "#000000",    # Black (swaps to white in Dark Mode)
+    "UNCOMMON": "#2EA44F",  # Green
+    "RARE": "#0070DD",      # Blue
+    "EPIC": "#A335EE",      # Purple
+    "LEGENDARY": "#FF8000", # Gold / Orange
+}
+
+RARITY_COLORS_DARK = {
+    **RARITY_COLORS_LIGHT,
+    "COMMON": "#FFFFFF",    # White for dark mode readability
 }
 
 # Base materials structured as: Base Value: (Name, Rarity)
@@ -89,15 +93,57 @@ def lookup_material(event=None):
 
     output_text.config(state="disabled")
 
+def toggle_always_on_top():
+    root.attributes("-topmost", always_on_top_var.get())
+
+def toggle_dark_mode():
+    is_dark = dark_mode_var.get()
+    
+    bg_color = "#1E1E1E" if is_dark else "#F0F0F0"
+    fg_color = "#FFFFFF" if is_dark else "#000000"
+    input_bg = "#2D2D2D" if is_dark else "#FFFFFF"
+    btn_bg = "#3A3A3A" if is_dark else "#E1E1E1"
+    active_btn_bg = "#4A4A4A" if is_dark else "#ECECEC"
+    
+    colors_dict = RARITY_COLORS_DARK if is_dark else RARITY_COLORS_LIGHT
+
+    # Main window and frames
+    root.config(bg=bg_color)
+    footer_frame.config(bg=bg_color)
+    options_frame.config(bg=bg_color)
+    legend_frame.config(bg=bg_color, fg=fg_color)
+
+    # Labels
+    title_label.config(bg=bg_color, fg=fg_color)
+    creator_label.config(bg=bg_color, fg=fg_color)
+
+    # Inputs and Text Box
+    entry.config(bg=input_bg, fg=fg_color, insertbackground=fg_color)
+    output_text.config(bg=input_bg, fg=fg_color)
+
+    # Buttons & Checkbuttons
+    btn.config(bg=btn_bg, fg=fg_color, activebackground=active_btn_bg, activeforeground=fg_color)
+    ontop_check.config(bg=bg_color, fg=fg_color, selectcolor=input_bg, activebackground=bg_color, activeforeground=fg_color)
+    dark_check.config(bg=bg_color, fg=fg_color, selectcolor=input_bg, activebackground=bg_color, activeforeground=fg_color)
+
+    # Update Output Text Tags
+    for rarity, color in colors_dict.items():
+        output_text.tag_config(rarity, foreground=color)
+
+    # Update Legend Items
+    for rarity, (item_frame, sq_label, txt_label) in legend_widgets.items():
+        item_frame.config(bg=bg_color)
+        sq_label.config(bg=bg_color, fg=colors_dict[rarity])
+        txt_label.config(bg=bg_color, fg=fg_color)
+
 # Create GUI window
 root = tk.Tk()
 root.title("SigAnalyzer")
-root.geometry("320x320")
+root.geometry("320x350")
 root.resizable(False, False)
 
 # --- Footer / Credit Section (Packed FIRST to stick to bottom) ---
 footer_frame = tk.Frame(root)
-# side="bottom" pins it down, pady=(0, 3) gives exactly 3px buffer from bottom border
 footer_frame.pack(side="bottom", pady=(0, 3))
 
 creator_label = tk.Label(footer_frame, text="Made by the community.", font=("Arial", 8))
@@ -106,7 +152,9 @@ creator_label.pack(side="left")
 # --- Top and Center Widgets ---
 
 # Input Field
-tk.Label(root, text="Enter signature value:", font=("Arial", 10, "bold")).pack(pady=(12, 4))
+title_label = tk.Label(root, text="Enter signature value:", font=("Arial", 10, "bold"))
+title_label.pack(pady=(12, 4))
+
 entry = tk.Entry(root, font=("Arial", 12), justify="center", width=20)
 entry.pack(pady=4)
 entry.bind("<Return>", lookup_material)
@@ -119,6 +167,30 @@ btn = tk.Button(
     font=("Arial", 10),
 )
 btn.pack(pady=4)
+
+# Options Frame (Always On Top & Dark Mode)
+options_frame = tk.Frame(root)
+options_frame.pack(pady=2)
+
+always_on_top_var = tk.BooleanVar(value=False)
+ontop_check = tk.Checkbutton(
+    options_frame,
+    text="Always On Top",
+    variable=always_on_top_var,
+    command=toggle_always_on_top,
+    font=("Arial", 8)
+)
+ontop_check.pack(side="left", padx=5)
+
+dark_mode_var = tk.BooleanVar(value=False)
+dark_check = tk.Checkbutton(
+    options_frame,
+    text="Dark Mode",
+    variable=dark_mode_var,
+    command=toggle_dark_mode,
+    font=("Arial", 8)
+)
+dark_check.pack(side="left", padx=5)
 
 # Output Text Box
 output_text = tk.Text(
@@ -133,7 +205,7 @@ output_text = tk.Text(
 output_text.pack(pady=(6, 12))
 
 # Configure Text Tags for colors
-for rarity, color in RARITY_COLORS.items():
+for rarity, color in RARITY_COLORS_LIGHT.items():
     output_text.tag_config(rarity, foreground=color)
 
 output_text.config(state="disabled")
@@ -142,8 +214,10 @@ output_text.config(state="disabled")
 legend_frame = tk.LabelFrame(root, text=" Rarity Legend ", font=("Arial", 8, "bold"))
 legend_frame.pack(pady=(0, 6), padx=15)
 
+legend_widgets = {}
+
 # Grid layout for legend (2 rows x 3 columns)
-for idx, (rarity, color) in enumerate(RARITY_COLORS.items()):
+for idx, (rarity, color) in enumerate(RARITY_COLORS_LIGHT.items()):
     row = idx // 3
     col = idx % 3
     
@@ -157,5 +231,7 @@ for idx, (rarity, color) in enumerate(RARITY_COLORS.items()):
     # Rarity Name Label
     txt_label = tk.Label(item_frame, text=rarity.title(), font=("Arial", 8))
     txt_label.pack(side="left", padx=(2, 0))
+
+    legend_widgets[rarity] = (item_frame, sq_label, txt_label)
 
 root.mainloop()
