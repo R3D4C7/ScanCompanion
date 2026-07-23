@@ -56,7 +56,7 @@ BASE_WIDTH = 300
 BASE_HEIGHT = 440
 
 def focus_and_click_entry():
-    """Moves the mouse to the center of the entry box, clicks it, and sets focus."""
+    """Moves the mouse to the center of the entry box, clears it, clicks it, and sets focus."""
     try:
         root.update_idletasks()
         
@@ -72,6 +72,9 @@ def focus_and_click_entry():
         
         root.focus_force()
         entry.focus_set()
+        
+        # Clear the input box completely
+        entry.delete(0, tk.END)
     except Exception as e:
         print(f"Error focusing entry box: {e}")
 
